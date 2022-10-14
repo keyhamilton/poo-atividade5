@@ -1,6 +1,6 @@
 class Conta {
-    numero: string;
-    saldo: number;
+    private numero: string;
+    private saldo: number;
 
     constructor(numero: string, saldo: number){
         this.numero = numero;
@@ -20,8 +20,12 @@ class Conta {
         this.saldo = this.saldo + valor;
     }
 
-    consultarSaldo(): number {
+    get consultarSaldo(): number {
         return this.saldo;
+    }
+
+    get consultarNumero(): string {
+        return this.numero;
     }
 
     transferir(contaDestino: Conta, valor: number): boolean{
@@ -38,7 +42,7 @@ class Banco {
     private contas: Conta[] = [];
 
     public inserir(conta: Conta): void {
-        let c = this.consultar(conta.numero);
+        let c = this.consultar(conta.consultarNumero);
         if(c == null){
             this.contas.push(conta);
 
@@ -48,7 +52,7 @@ class Banco {
     public consultar(numero: string): Conta {
         let contaProcurada!: Conta;
         for (let c of this.contas) {
-            if (c.numero == numero) {
+            if (c.consultarNumero == numero) {
             contaProcurada = c;
             break;
             }
@@ -59,7 +63,7 @@ class Banco {
     private consultarIndice(numero: string): number {
         let indice: number = -1;
         for (let i: number = 0; i < this.contas.length; i++) {
-            if (this.contas[i].numero == numero) {
+            if (this.contas[i].consultarNumero == numero) {
             indice = i;
             break;
             }
@@ -69,7 +73,7 @@ class Banco {
 
 
     public alterar(c: Conta): void {
-        let indice = this.consultarIndice(c.numero);
+        let indice = this.consultarIndice(c.consultarNumero);
 
         if (indice != -1) {
             this.contas[indice] = c;
@@ -115,7 +119,7 @@ class Banco {
     public somaSaldos(): number {
         let soma: number = 0;
         for (let i = 0; i < this.contas.length; i++) {
-            soma += this.contas[i].saldo; 
+            soma += this.contas[i].consultarSaldo; 
         }
         return soma;
     }
