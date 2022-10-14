@@ -54,7 +54,7 @@ function consultar(): void {
     let numero: string = input('Digite o número da conta para consulta:');
     let conta: Conta = banco.consultar(numero);
     if (conta != null) {
-        console.log(`Saldo atual: ${conta.consultarSaldo()}`);
+        console.log(`Saldo atual: ${conta.consultarSaldo}`);
         
     } else {
         console.log('Conta não existe');
