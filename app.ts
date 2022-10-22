@@ -1,5 +1,5 @@
 import prompt from "prompt-sync";
-import {Conta, Banco} from './banco';
+import {Conta, Banco, Poupanca, ContaImposto } from './banco';
 
 
 let input = prompt();
@@ -8,9 +8,9 @@ let opcao: string = '';
 
 do {
     console.log('\nBem vindo\nDigite uma opção:');
-    console.log('1 - Cadastrar 2 - Consultar 3 - Sacar\n' +
-                '4 - Depositar 5 - Excluir 6 - Transferir\n' +
-                '7 – Totalizações\n' +
+    console.log('1 - Cadastrar   2 - Consultar   3 - Sacar\n' +
+                '4 - Depositar   5 - Excluir     6 - Transferir\n' +
+                '7 – Totalizações                8 - Render Juros\n' + 
                 '0 - Sair\n');
     opcao = input("Opção:");   
     switch (opcao) {
@@ -35,18 +35,48 @@ do {
         case "7":
             totalizacao();
             break;
+        case "8":
+            renderJuros()
+        
     }
-
+    if(opcao != '0') {
         input("Operação finalizada. Digite <enter>");         
+    };
+
 } while (opcao != '0');
 console.log("Aplicação encerrada");
 
 function inserir(): void {
     console.log("\nCadastrar conta\n");
-    let numero: string = input('Digite o número da conta:');
-    let conta: Conta;
-    conta = new Conta(numero, 0);
-    banco.inserir(conta);
+    do {
+        var tipo: string = input('Tipo de conta > c - corrente | p - poupança | i - conta imposto: ');
+        tipo = tipo.toLowerCase()
+    } while (tipo != 'c' && tipo != 'p' && tipo != 'i');
+
+    if(tipo == 'c') {
+
+        let numero: string = input('Digite o número da conta:');
+        let conta: Conta;
+        conta = new Conta(numero, 0);
+        banco.inserir(conta);
+    };
+
+    if(tipo == 'p') {
+
+        let numero: string = input('Digite o número da conta:');
+        let taxaJuros: number = parseFloat(input('Digite a taxa de rendimento:'));
+        let conta: Conta;
+        conta = new Poupanca(numero, 0, taxaJuros);
+        banco.inserir(conta);
+    }
+
+    if(tipo == 'i') {
+        let numero: string = input('Digite o número da conta:');
+        let taxaDesconto: number = parseFloat(input('Digite a taxa de desconto:'));
+        let conta: Conta;
+        conta = new ContaImposto(numero, 0, taxaDesconto);
+        banco.inserir(conta);
+    }
 }
 
 function consultar(): void {
@@ -54,7 +84,7 @@ function consultar(): void {
     let numero: string = input('Digite o número da conta para consulta:');
     let conta: Conta = banco.consultar(numero);
     if (conta != null) {
-        console.log(`Saldo atual: ${conta.consultarSaldo}`);
+        console.log(`Saldo atual: ${conta.saldo}`);
         
     } else {
         console.log('Conta não existe');
@@ -94,9 +124,21 @@ function transferir(): void {
 }
 
 function totalizacao(): void {
-    console.log(`${banco.contarContas()} contas no banco`);
+    console.log("\nTotalizações\n");
+    console.log(`${banco.contas} contas no banco`);
     console.log(`${banco.somaSaldos()} R$ de balanço total`);
     console.log(`${banco.calcularMedia()} R$ saldo médio das contas`);
     
-    
+}
+
+function renderJuros(): void {
+    console.log("\nRender Juros\n");
+    let numero: string = input('Digite o número da conta:');
+    let saldo: number = banco.renderJuros(numero);
+    if(saldo > 0) {
+        console.log(`${saldo} R$ de saldo`); 
+    }
+    else {
+        console.log('Conta não existe ou não é poupança');
+    }
 }
